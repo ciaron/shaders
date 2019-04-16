@@ -19,6 +19,15 @@ float Rect(vec2 uv, float left, float right, float top, float bottom, float blur
     return band1 * band2;
 }
 
+float remap01(float a, float b, float t){
+    return (t-a) / (b-a);
+}
+
+float remap(float a, float b, float c, float d, float t) {
+    return remap01(a, b, t) * (d-c) + c;
+}
+
+
 void main() {
 
   vec2 uv = gl_FragCoord.xy / u_resolution.y;
@@ -44,8 +53,13 @@ void main() {
   //m *= 4.*m * -1.;
 
   float m = sin(u_time+x*8.) * .1;
+
   y += m;
-  mask = Rect(vec2(x,y),  -.5, .5, -.1, .1, .01);
+
+  float blur = remap(-.5, .5, .01, .25, x);
+  //blur *= blur;
+  //blur = pow(blur*4., 1.5);
+  mask = Rect(vec2(x,y),  -.5, .5, -.1, .1, blur);
 
   // original:
   //mask = Rect(vec2(x,y),  -.2, .2, -.3, .3, .01);
