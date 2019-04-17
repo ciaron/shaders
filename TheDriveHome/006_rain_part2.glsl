@@ -179,7 +179,7 @@ vec3 tailLights(ray r, float t) {
 }
 
 vec2 rain(vec2 uv, float t) {
-  uv *= 3.;
+///  uv *= 3.;
   t*=40.;
   vec2 a = vec2(3., 1.);      // scaling aspect ratio for mini boxes
   vec2 st = uv*a;
@@ -193,7 +193,7 @@ vec2 rain(vec2 uv, float t) {
   id = floor(st);
   st = fract(st) - .5; // make mini boxes, one for each raindrop
 
-  t += fract(sin(id.x*76.34 + id.y*1453.7) * 768.34) * 6.28; // for speed
+  t += fract(sin(id.x*76.34 + id.y*143.7) * 768.34) * 6.28; // for speed
 
   float y = -sin(t + sin(t + sin(t) *.5)) * .43;
 
@@ -204,11 +204,14 @@ vec2 rain(vec2 uv, float t) {
 
   vec2 o2 = (fract(uv*a.x*vec2(1., 2.)) - .5) / vec2(1., 2.);
   d = length(o2);
-  float m2 = S(.3*(.5-st.y+.5), .0, d) * S(-.1, .1, st.y-p1.y);
+  //float m2 = S(.3*(.5-st.y+.5), .0, d) * S(-.1, .1, st.y-p1.y);
+  float m2 = S(.3*(.5-st.y), .0, d) * S(-.1, .1, st.y-p1.y);
+
 
   //if (st.x>.46 || st.y > .49) m1 = 1.;
 
   return vec2(m1 * o1 * 30. + m2*o2*10.);
+  //return vec2(m1, m2);
 }
 
 void main() {
@@ -225,8 +228,11 @@ void main() {
 
   // distortion example
   //uv.x+=sin(uv.y * 40.) * .1;
-  vec2 rainDistort = rain(uv, t);
-  ray r = CameraSetup(uv+rainDistort, camPos, lookAt, 2.);
+  vec2 rainDistort = rain(uv*5., t)*.5;
+  rainDistort += rain(uv*7., t)*.5;
+  uv.x += sin(uv.y*70.)*.002;
+  uv.y += sin(uv.x*170.)*.001;
+  ray r = CameraSetup(uv-rainDistort*.5, camPos, lookAt, 2.);
 
   vec3 col = streetLights(r, t);
   col += headLights(r, t);
@@ -235,7 +241,7 @@ void main() {
 
   col += (r.d.y + .25)* vec3(.2,.1,.5);
 
-  col = vec3(rainDistort, 0.);
+  //col = vec3(rainDistort, 0.);
   gl_FragColor = vec4(col,1.);
 
 }

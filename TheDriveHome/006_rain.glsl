@@ -180,7 +180,8 @@ vec3 tailLights(ray r, float t) {
 
 vec2 rain(vec2 uv, float t) {
   uv *= 3.;
-  t*=40.;
+  t *= 40.;
+
   vec2 a = vec2(3., 1.);      // scaling aspect ratio for mini boxes
   vec2 st = uv*a;
   vec2 id = floor(st); // generate an id for each box
@@ -191,15 +192,18 @@ vec2 rain(vec2 uv, float t) {
   id = floor(st);
   st = fract(st) - .5; // make mini boxes, one for each raindrop
 
-  t+=fract(sin(id.x*76.34 + id.y*1453.7) * 768.34) * 6.28; // for speed
+  t+=fract(sin(id.x*76.34 + id.y*143.7) * 768.34) * 6.28; // for speed
 
   float y = -sin(t + sin(t + sin(t) *.5)) * .43;
   vec2 p1 = vec2(0., y);
   float d = length((st-p1)/a);       // distance to centre of box
-  float m1 = S(.07, .0, d);
+  float m1 = S(.07, 0., d);
 
-  d = length((fract(uv*a.x*vec2(1., 2.)) - .5) / vec2(1., 2.));
-  float m2 = S(.3*(.5-st.y+.5), .0, d) * S(-.1, .1, st.y-p1.y);
+  d = length( (fract(uv*a.x*vec2(1., 2.)) - .5) / vec2(1., 2.) );
+  //d = length( (fract(uv*a.x) -.5));
+  //float m2 = S(.3*(.5-st.y+.5), .0, d) * S(-.1, .1, st.y-p1.y);
+  float m2 = S(.3*(.5-st.y), .0, d) * S(-.1, .1, st.y-p1.y);
+
   if (st.x>.46 || st.y > .49) m1 = 1.;
 
   return vec2(m1 + m2);
