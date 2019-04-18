@@ -23,7 +23,6 @@ vec2 N22(vec2 p) {
 }
 
 vec2 getPos(vec2 id, vec2 offset) {
-
   vec2 n = N22(id+offset) * u_time;
   return offset+sin(n)*.4;
 }
@@ -75,7 +74,6 @@ float layer(vec2 uv){
   m += drawLine(gv, p[7], p[3]);
 
   return m;
-
 }
 
 void main() {
@@ -93,7 +91,6 @@ void main() {
   uv *= rot;
   mouse *= rot;
 
-
   // create layers with different sizes
   for (float i=0.; i<=1.; i+=1./4.){
     float z = fract(i+t);
@@ -101,16 +98,12 @@ void main() {
 
     // fade layers in and out
     float fade = S(0., .5, z) * S(1., .8, z);
-
     m += layer(uv*size + i*20. - mouse)*fade;
   }
 
   vec3 base = sin(t*5.*vec3(.345,.456,.657))*.3 + .6; // base color;
   vec3 col = m*base;
   col -= base*gradient;
-
-  //col.rg = id*.2; // visualise id in each cell
-  //if (gv.x>.48 || gv.y>.48) col = vec3(1,0,0);  // show grid for debugging
 
   gl_FragColor = vec4(col, 1.);
 
